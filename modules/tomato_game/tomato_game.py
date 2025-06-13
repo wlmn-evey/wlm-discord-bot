@@ -215,18 +215,26 @@ class TomatoGame(commands.Cog):
 
         # Check if milestone is reached
         if stats.message_count >= self.user_milestones[user_id]:
-            # Grant reward
-            reward = random.randint(5, 25)
-            increment_tomato_stat(user_id, 'coins', reward)
+            # Decide on the reward type (80% chance for coins, 20% for a lootbox)
+            reward_type = random.choices(['coins', 'lootbox'], weights=[0.8, 0.2], k=1)[0]
+            notification_message = ""
 
-            logger.info(f"User {user_id} reached activity milestone, granting {reward} coins.")
+            if reward_type == 'coins':
+                reward_amount = random.randint(5, 25)
+                increment_tomato_stat(user_id, 'coins', reward_amount)
+                logger.info(f"User {user_id} reached activity milestone, granting {reward_amount} coins.")
+                notification_message = f"🎉 **{message.author.display_name}**, your activity has earned you {reward_amount} Tomato Coins!"
+            else:  # Free lootbox
+                items = list(self.loot_table.keys())
+                weights = list(self.loot_table.values())
+                chosen_item = random.choices(items, weights=weights, k=1)[0]
+                add_to_inventory(user_id, chosen_item)
+                logger.info(f"User {user_id} reached activity milestone, granting a free lootbox containing a {chosen_item}.")
+                notification_message = f"🎁 **{message.author.display_name}**, your activity has earned you a free lootbox! You found a **{chosen_item}** inside!"
 
             # Announce reward and make it disappear after 10s to reduce spam
             try:
-                await message.channel.send(
-                    f"🎉 **{message.author.display_name}**, your activity has earned you {reward} Tomato Coins!",
-                    delete_after=10
-                )
+                await message.channel.send(notification_message, delete_after=10)
             except discord.errors.Forbidden:
                 logger.warning(f"Could not send activity reward message in channel {message.channel.id}")
 
