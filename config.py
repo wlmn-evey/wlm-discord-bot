@@ -6,6 +6,7 @@ load_dotenv()
 
 # Bot configuration
 BOT_TOKEN = os.getenv('DISCORD_BOT_TOKEN')
+GUILD_ID = 1234567890  # Replace with your Guild (server) ID
 BOT_PREFIX = '!'
 BOT_OWNER_IDS = []  # Add owner Discord IDs here
 
