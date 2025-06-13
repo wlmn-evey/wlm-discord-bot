@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome Wagon Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <style>
+        .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            vertical-align: middle;
+            margin-right: 1rem;
+        }
+        .container {
+            max-width: 960px;
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <h1 style="margin-top: 2rem;">Welcome Wagon Dashboard</h1>
+        <p>Manage new members in the "New In Town" program. Click "Graduate" to remove their special role.</p>
+
+        <figure>
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Member</th>
+                        <th scope="col">Message Count</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for member in members %}
+                    <tr>
+                        <td>
+                            <img src="{{ member.avatar_url }}" alt="{{ member.name }}'s avatar" class="avatar">
+                            <strong>{{ member.name }}</strong>
+                        </td>
+                        <td>{{ member.message_count }}</td>
+                        <td>
+                            <form action="/graduate/{{ member.id }}" method="post" style="margin: 0;">
+                                <button type="submit" class="secondary">Graduate</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="3">No members are currently "New In Town".</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </figure>
+    </main>
+</body>
+</html>
